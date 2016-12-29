@@ -1,11 +1,23 @@
+from datetime import datetime
 from flask import Flask, render_template
 from flask_script import Manager
 from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from flask_wtf import Form
+from wtforms import StringField, SubmitField
+from wtforms.validators import Required
+
+
+class NameForm(form):
+    name = StringField('What is your name?', validators=[Required()])
+    submit = SubmitField('Submit')
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'hard to guess string'
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
+moment = Moment(app)
 
 
 @app.errorhandler(404)
@@ -20,7 +32,7 @@ def internal_server_error(e):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', current_time=datetime.utcnow())
 
 
 @app.route('/user/<name>')
